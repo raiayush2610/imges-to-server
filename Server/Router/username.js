@@ -1,15 +1,7 @@
 const router = require('express').Router();
-// const session = require('express-session');
-// const passport = require("passport");
-// const passportLocalMongoose = require("passport-local-mongoose");
+const fs = require('fs');
+var Buffer = require('buffer/').Buffer
 
-// router.use(session({
-//     secret: "Our little secre.",
-//     resave: false,
-//     saveUninitialized: false
-// }));
-// router.use(passport.initialize());
-// router.use(passport.session());
 
 const userItem = require('../models/Sign');
 var multer = require('multer');
@@ -24,23 +16,33 @@ const storage =multer.diskStorage({
 })
 const upload =multer({storage:storage})
 
-router.post('/api/username',upload.single('profile'),async( req, res )=>{
+router.post('/api/username',upload.single('Profileimg'),async( req, res )=>{
           try {
+            var img =fs.readFileSync(req.file.path);
+            var encode_img = img.toString('base64');
+            var finalImg ={
+                  contentType: req.file.mimetype,
+                  image:  new Buffer(encode_img, 'base64')
+            }     
             console.log("post2d is workiing");
-            console.log(req.body);
-            //         const newUser = new userItem({
-            //                   Name: req.body.Name,
-            //                   Age: req.body.Age,
-            //                   Birth: req.body.Birth,
-            //                   Profile_img:(req.file) ? req.file.filename : null,                           
-            //                   Email: req.body.Email,
-            //                   Password: req.body.Password
-
-            //         })
-            //         console.log(req.body);
-            //         console.log(userItem);
-            //         const save = await newUser.save();
-            //         res.status(200).json("Added Succefully");
+            // console.log(finalImg);
+            // console.log(mimetype);
+           
+            const newUser = new userItem({
+                                    Name: req.body.fullName,
+                                    Age: req.body.age,
+                                    Birth: req.body.birth,
+                                    Profileimg:finalImg,                       
+                                    Email: req.body.username,
+                                    Password: req.body.password
+      
+                          })
+                          console.log("newuser"+newUser);
+                    const save = await newUser.save()
+                    .then((res)=>{
+                        console.log('image is saved')
+                    })
+                    res.status(200).json("Added Succefully");
                                   
           } catch (error) {
                     res.json(error);                    

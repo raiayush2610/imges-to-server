@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
- 
+var Buffer = require('buffer/').Buffer
 const usernameSchema = new mongoose.Schema({
         Name:{type: String},
         Age:{ type : Number}, 
         Birth:{ type : Date},
-        Profile_img:{
-                        data: Buffer,
-                        contentType: "String"
+        Profileimg:{
+                        contentType: "String",
+                        data: Buffer
+                       
                 },        
         Email:{ type : String},
         Password:{ type : String}
